@@ -1,0 +1,78 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  login     String   @unique
+  password  String
+  role      Role     @default(VIEWER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  articles  Article[] @relation("UserArticles")
+  comments  Comment[] @relation("UserComments")
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  
+  articles    Article[] @relation("CategoryArticles")
+}
+
+model Tag {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  
+  articles Article[]
+}
+
+model Article {
+  id         String        @id @default(uuid())
+  title      String
+  content    String
+  status     ArticleStatus @default(DRAFT)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  authorId   String?
+  author     User?         @relation("UserArticles", fields: [authorId], references: [id], onDelete: SetNull)
+
+  categoryId String?
+  category   Category?     @relation("CategoryArticles", fields: [categoryId], references: [id], onDelete: SetNull)
+
+  tags       Tag[]
+
+  comments   Comment[]     @relation("ArticleComments")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+
+  authorId  String
+  author    User     @relation("UserComments", fields: [authorId], references: [id], onDelete: Cascade)
+
+  articleId String
+  article   Article  @relation("ArticleComments", fields: [articleId], references: [id], onDelete: Cascade)
+}
