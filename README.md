@@ -1,84 +1,133 @@
-# Knowledge Hub
+# Knowledge Hub API
+
+A RESTful API for managing articles, categories, tags, comments, and users. Built with NestJS, PostgreSQL, and Prisma ORM. Fully containerized with Docker.
+
+## Tech Stack
+
+- **Runtime**: Node.js 24
+- **Framework**: NestJS
+- **Database**: PostgreSQL 16
+- **ORM**: Prisma 7
+- **Containerization**: Docker + Docker Compose
+
+## Docker Hub
+
+https://hub.docker.com/r/eugeneorhanistyi/knowledge-hub-api
 
 ## Prerequisites
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- [Docker](https://docs.docker.com/engine/install/)
+- [Node.js 24+](https://nodejs.org/) (for local development)
 
-## Downloading
+## Getting Started
 
+### 1. Clone the repository
+
+```bash
+git clone git@github.com:yevheniiorhanistyi/nodejs-2026q1-knowledge-hub.git
+cd knowledge-hub
 ```
-git clone {repository URL}
+
+### 2. Set up environment variables
+
+```bash
+cp .env.example .env
 ```
 
-## Installing NPM modules
+Edit `.env` and fill in your values.
 
+### 3. Start with Docker
+
+```bash
+docker-compose up --build
 ```
+
+After startup:
+
+- API is available at: http://localhost:4000
+- Swagger docs: http://localhost:4000/doc
+
+### 4. Apply migrations (first run)
+
+```bash
+npx prisma migrate deploy
+```
+
+### 5. Seed the database (optional)
+
+```bash
+npx prisma db seed
+```
+
+### 6. Start Adminer (database UI)
+
+```bash
+docker-compose --profile debug up
+```
+
+Adminer is available at: http://localhost:8080
+
+## Environment Variables
+
+| Variable            | Description                  | Example                                                             |
+| ------------------- | ---------------------------- | ------------------------------------------------------------------- |
+| `PORT`              | Application port             | `4000`                                                              |
+| `DATABASE_URL`      | PostgreSQL connection string | `postgresql://user:pass@localhost:5432/knowledge_hub?schema=public` |
+| `POSTGRES_USER`     | PostgreSQL user              | `postgres`                                                          |
+| `POSTGRES_PASSWORD` | PostgreSQL password          | `postgres`                                                          |
+| `POSTGRES_DB`       | PostgreSQL database name     | `knowledge_hub`                                                     |
+| `POSTGRES_HOST`     | PostgreSQL host (Docker)     | `db`                                                                |
+| `POSTGRES_PORT`     | PostgreSQL port              | `5432`                                                              |
+
+## API Endpoints
+
+| Method | Endpoint           | Description        |
+| ------ | ------------------ | ------------------ |
+| GET    | /user              | Get all users      |
+| POST   | /user              | Create user        |
+| GET    | /user/:id          | Get user by ID     |
+| PUT    | /user/:id/password | Update password    |
+| DELETE | /user/:id          | Delete user        |
+| GET    | /article           | Get all articles   |
+| POST   | /article           | Create article     |
+| GET    | /article/:id       | Get article by ID  |
+| PUT    | /article/:id       | Update article     |
+| DELETE | /article/:id       | Delete article     |
+| GET    | /category          | Get all categories |
+| POST   | /category          | Create category    |
+| GET    | /category/:id      | Get category by ID |
+| PUT    | /category/:id      | Update category    |
+| DELETE | /category/:id      | Delete category    |
+| GET    | /comment/:id       | Get comment by ID  |
+| POST   | /comment           | Create comment     |
+| DELETE | /comment/:id       | Delete comment     |
+
+Full interactive documentation available at `/doc` (Swagger UI).
+
+## Local Development
+
+```bash
+# Install dependencies
 npm install
+
+# Start database
+docker-compose up -d db
+
+# Apply migrations
+npx prisma migrate dev
+
+# Seed database
+npx prisma db seed
+
+# Start in watch mode
+npm run start:dev
+
+# Open Prisma Studio
+npx prisma studio
 ```
 
-## Running application
+## Security Scan
 
-```
-npm start
-```
+Scanned with Docker Scout — no critical vulnerabilities found.
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
-
-## Testing
-
-After application running open new terminal and enter:
-
-To run all tests without authorization
-
-```
-npm run test
-```
-
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
-
-To run all test with authorization
-
-```
-npm run test:auth
-```
-
-To run only specific test suite with authorization
-
-```
-npm run test:auth -- <path to suite>
-```
-
-To run refresh token tests
-
-```
-npm run test:refresh
-```
-
-To run RBAC (role-based access control) tests
-
-```
-npm run test:rbac
-```
-
-### Auto-fix and format
-
-```
-npm run lint
-```
-
-```
-npm run format
-```
-
-### Debugging in VSCode
-
-Press <kbd>F5</kbd> to debug.
-
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+> ![Scout](scout.png)
