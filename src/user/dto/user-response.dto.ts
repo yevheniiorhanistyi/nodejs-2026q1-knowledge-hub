@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
-import { UserRole } from '../user.types';
+import { Role } from '@prisma/client';
 
 export class UserResponseDto {
   @ApiProperty()
@@ -13,7 +13,7 @@ export class UserResponseDto {
 
   @ApiProperty()
   @Expose()
-  role: UserRole;
+  role: Role;
 
   @ApiProperty()
   @Expose()

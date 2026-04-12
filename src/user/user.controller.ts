@@ -21,35 +21,39 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  @ApiCreatedResponse({ type: UserResponseDto })
-  create(@Body() createUserDto: CreateUserDto): UserResponseDto {
+  @ApiCreatedResponse({
+    description: 'The user has been successfully created.',
+  })
+  create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
     return this.userService.create(createUserDto);
   }
 
   @Get()
-  @ApiOkResponse({ type: [UserResponseDto] })
-  findAll(): UserResponseDto[] {
+  @ApiOkResponse({ description: 'Returns a list of users.' })
+  findAll(): Promise<UserResponseDto[]> {
     return this.userService.findAll();
   }
 
   @Get(':id')
-  @ApiOkResponse({ type: UserResponseDto })
-  findOne(@Param('id', new ParseUUIDPipe()) id: string): UserResponseDto {
+  @ApiOkResponse({ description: 'Returns the requested user.' })
+  findOne(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<UserResponseDto> {
     return this.userService.findOne(id);
   }
 
   @Put(':id')
-  @ApiOkResponse({ type: UserResponseDto })
+  @ApiOkResponse({ description: 'The user has been successfully updated.' })
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
-  ): UserResponseDto {
+  ): Promise<UserResponseDto> {
     return this.userService.updatePassword(id, updatePasswordDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id', new ParseUUIDPipe()) id: string): void {
+  remove(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
     return this.userService.remove(id);
   }
 }
