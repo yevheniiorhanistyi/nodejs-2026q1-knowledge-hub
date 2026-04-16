@@ -44,6 +44,8 @@ model Tag {
   name     String    @unique
   
   articles Article[]
+
+  @@index([name])
 }
 
 model Article {
@@ -63,6 +65,8 @@ model Article {
   tags       Tag[]
 
   comments   Comment[]     @relation("ArticleComments")
+  
+  @@index([status, categoryId])
 }
 
 model Comment {
