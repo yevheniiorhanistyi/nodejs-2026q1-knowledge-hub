@@ -33,14 +33,12 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @Public()
   @Get()
   @ApiOkResponse({ description: 'Returns a list of users.' })
   findAll(): Promise<UserResponseDto[]> {
     return this.userService.findAll();
   }
 
-  @Public()
   @Get(':id')
   @ApiOkResponse({ description: 'Returns the requested user.' })
   findOne(

@@ -33,14 +33,12 @@ export class CategoryController {
     return this.categoryService.create(createCategoryDto);
   }
 
-  @Public()
   @Get()
   @ApiOkResponse({ description: 'Returns a list of categories.' })
   findAll() {
     return this.categoryService.findAll();
   }
 
-  @Public()
   @Get(':id')
   @ApiOkResponse({ description: 'Returns the requested category.' })
   findOne(@Param('id', new ParseUUIDPipe()) id: string) {

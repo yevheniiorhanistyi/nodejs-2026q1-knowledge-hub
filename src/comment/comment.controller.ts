@@ -32,16 +32,17 @@ export class CommentController {
     return this.commentService.create(createCommentDto);
   }
 
-  @Public()
   @Get()
   @ApiOkResponse({
     description: 'Returns a list of comments.',
   })
-  findAll(@Query('articleId', new ParseUUIDPipe()) articleId: string) {
+  findAll(
+    @Query('articleId', new ParseUUIDPipe({ optional: true }))
+    articleId?: string,
+  ) {
     return this.commentService.findByArticleId(articleId);
   }
 
-  @Public()
   @Get(':id')
   @ApiOkResponse({
     description: 'Returns the requested comment.',

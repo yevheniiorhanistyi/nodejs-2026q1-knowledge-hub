@@ -40,7 +40,6 @@ export class ArticleController {
     return this.articleService.create(createArticleDto);
   }
 
-  @Public()
   @Get()
   @ApiOkResponse({ description: 'Returns a list of articles.' })
   @ApiQuery({ name: 'status', required: false, enum: ArticleStatus })
@@ -54,7 +53,6 @@ export class ArticleController {
     return this.articleService.findAll(status, tag, categoryId);
   }
 
-  @Public()
   @Get(':id')
   @ApiOkResponse({ description: 'Returns the requested article.' })
   findOne(@Param('id', new ParseUUIDPipe()) id: string) {
