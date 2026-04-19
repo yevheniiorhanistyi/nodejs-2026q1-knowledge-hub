@@ -23,11 +23,11 @@ async function main() {
   const editorPassword = await bcrypt.hash('editor123', 10);
 
   const admin = await prisma.user.create({
-    data: { login: 'admin', password: adminPassword, role: Role.ADMIN },
+    data: { login: 'admin', password: adminPassword, role: Role.admin },
   });
 
   const editor = await prisma.user.create({
-    data: { login: 'editor', password: editorPassword, role: Role.EDITOR },
+    data: { login: 'editor', password: editorPassword, role: Role.editor },
   });
 
   // Categories
