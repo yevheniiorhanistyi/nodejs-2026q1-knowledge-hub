@@ -11,6 +11,10 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
 import { Comment } from '@prisma/client';
+
+import { Public } from '../common/decorators/public.decorator';
+import { Roles } from '../common/decorators/roles.decorator';
+
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 
@@ -19,6 +23,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
+  @Roles('admin', 'editor')
   @Post()
   @ApiCreatedResponse({
     description: 'The comment has been successfully created.',
@@ -27,6 +32,7 @@ export class CommentController {
     return this.commentService.create(createCommentDto);
   }
 
+  @Public()
   @Get()
   @ApiOkResponse({
     description: 'Returns a list of comments.',
@@ -35,6 +41,7 @@ export class CommentController {
     return this.commentService.findByArticleId(articleId);
   }
 
+  @Public()
   @Get(':id')
   @ApiOkResponse({
     description: 'Returns the requested comment.',
@@ -43,6 +50,7 @@ export class CommentController {
     return this.commentService.findOne(id);
   }
 
+  @Roles('admin')
   @Delete(':id')
   @HttpCode(204)
   remove(@Param('id', new ParseUUIDPipe()) id: string) {
