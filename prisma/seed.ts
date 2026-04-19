@@ -54,7 +54,7 @@ async function main() {
     data: {
       title: 'Getting Started with TypeScript',
       content: 'TypeScript is a typed superset of JavaScript...',
-      status: ArticleStatus.PUBLISHED,
+      status: ArticleStatus.published,
       authorId: editor.id,
       categoryId: tech.id,
       tags: { connect: [{ id: tags[0].id }, { id: tags[1].id }] },
@@ -65,7 +65,7 @@ async function main() {
     data: {
       title: 'Node.js Best Practices',
       content: 'Here are the best practices for Node.js...',
-      status: ArticleStatus.PUBLISHED,
+      status: ArticleStatus.published,
       authorId: editor.id,
       categoryId: tech.id,
       tags: { connect: [{ id: tags[2].id }] },
@@ -76,7 +76,7 @@ async function main() {
     data: {
       title: 'Introduction to Prisma ORM',
       content: 'Prisma makes database access easy...',
-      status: ArticleStatus.DRAFT,
+      status: ArticleStatus.draft,
       authorId: admin.id,
       categoryId: tech.id,
       tags: { connect: [{ id: tags[3].id }, { id: tags[1].id }] },
@@ -87,7 +87,7 @@ async function main() {
     data: {
       title: 'Docker for Developers',
       content: 'Docker simplifies containerization...',
-      status: ArticleStatus.PUBLISHED,
+      status: ArticleStatus.published,
       authorId: admin.id,
       categoryId: tech.id,
       tags: { connect: [{ id: tags[4].id }] },
@@ -98,7 +98,7 @@ async function main() {
     data: {
       title: 'The History of the Internet',
       content: 'The internet started as ARPANET...',
-      status: ArticleStatus.ARCHIVED,
+      status: ArticleStatus.archived,
       authorId: editor.id,
       categoryId: science.id,
       tags: { connect: [{ id: tags[0].id }] },
