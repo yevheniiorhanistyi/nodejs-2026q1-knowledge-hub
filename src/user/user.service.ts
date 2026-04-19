@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../prisma/prisma.service';
 import { plainToInstance } from 'class-transformer';
 
@@ -15,10 +16,11 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     const user = await this.prisma.user.create({
       data: {
         login: createUserDto.login,
-        password: createUserDto.password,
+        password: hashedPassword,
         role: createUserDto.role,
       },
     });
@@ -48,12 +50,14 @@ export class UserService {
   ): Promise<UserResponseDto> {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException();
-    if (user.password !== dto.oldPassword)
-      throw new ForbiddenException('Wrong password');
 
+    const passwordMatch = await bcrypt.compare(dto.oldPassword, user.password);
+    if (!passwordMatch) throw new ForbiddenException('Wrong password');
+
+    const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
     const updated = await this.prisma.user.update({
       where: { id },
-      data: { password: dto.newPassword },
+      data: { password: hashedPassword },
     });
     return plainToInstance(UserResponseDto, updated, {
       excludeExtraneousValues: true,

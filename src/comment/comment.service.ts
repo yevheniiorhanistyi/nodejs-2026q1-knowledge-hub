@@ -10,6 +10,13 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 export class CommentService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private mapComment(comment: any) {
+    return {
+      ...comment,
+      createdAt: comment.createdAt.getTime(),
+    };
+  }
+
   async create(dto: CreateCommentDto) {
     const article = await this.prisma.article.findUnique({
       where: { id: dto.articleId },
@@ -17,23 +24,27 @@ export class CommentService {
     if (!article)
       throw new UnprocessableEntityException('Article does not exist');
 
-    return this.prisma.comment.create({
+    const comment = await this.prisma.comment.create({
       data: {
         content: dto.content,
         articleId: dto.articleId,
         authorId: dto.authorId,
       },
     });
+    return this.mapComment(comment);
   }
 
   async findOne(id: string) {
     const comment = await this.prisma.comment.findUnique({ where: { id } });
     if (!comment) throw new NotFoundException();
-    return comment;
+    return this.mapComment(comment);
   }
 
   async findByArticleId(articleId: string) {
-    return this.prisma.comment.findMany({ where: { articleId } });
+    const comments = await this.prisma.comment.findMany({
+      where: { articleId },
+    });
+    return comments.map((c) => this.mapComment(c));
   }
 
   async remove(id: string) {

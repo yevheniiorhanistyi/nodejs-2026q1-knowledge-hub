@@ -8,7 +8,11 @@ export class CategoryService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateCategoryDto) {
-    return this.prisma.category.create({ data: dto });
+    return this.prisma.category.upsert({
+      where: { name: dto.name },
+      update: { description: dto.description },
+      create: dto,
+    });
   }
 
   async findAll() {
