@@ -62,7 +62,7 @@ export class AuthService {
   }
 
   async refresh(dto: RefreshTokenDto): Promise<TokensResponseDto> {
-    if (!dto.refreshToken) {
+    if (!dto?.refreshToken) {
       throw new UnauthorizedError('Refresh token is required');
     }
 
