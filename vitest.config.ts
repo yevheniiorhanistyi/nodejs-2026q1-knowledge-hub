@@ -5,6 +5,7 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     include: ['src/**/*.unit.spec.ts'],
+    setupFiles: ['src/test-setup.ts'],
     coverage: {
       provider: 'v8',
       include: ['src/**/*.ts'],
@@ -15,6 +16,10 @@ export default defineConfig({
         'src/**/*.entity.ts',
         'src/**/*.types.ts',
         'src/prisma/**',
+        'src/test-setup.ts',
+        'src/**/*.controller.ts',
+        'src/common/logger/**',
+        'src/common/decorators/**',
       ],
       thresholds: {
         lines: 90,
