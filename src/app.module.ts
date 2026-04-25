@@ -8,7 +8,6 @@ import { UserModule } from './user/user.module';
 import { CommentModule } from './comment/comment.module';
 import { CategoryModule } from './category/category.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
