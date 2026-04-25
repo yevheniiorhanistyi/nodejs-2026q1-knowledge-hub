@@ -1,8 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { ArticleStatus } from '@prisma/client';
+
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { ArticleStatus } from '@prisma/client';
+
+import { NotFoundError } from '../common/errors/http-errors';
 
 @Injectable()
 export class ArticleService {
@@ -54,7 +57,7 @@ export class ArticleService {
       where: { id },
       include: { tags: true },
     });
-    if (!article) throw new NotFoundException();
+    if (!article) throw new NotFoundError();
     return this.mapArticle(article);
   }
 
