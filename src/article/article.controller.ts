@@ -17,6 +17,10 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { Article } from '@prisma/client';
+
+import { Public } from '../common/decorators/public.decorator';
+import { Roles } from '../common/decorators/roles.decorator';
+
 import { ArticleStatus } from './article.types';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -27,6 +31,7 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
+  @Roles('admin', 'editor')
   @Post()
   @ApiCreatedResponse({
     description: 'The article has been successfully created.',
@@ -54,6 +59,7 @@ export class ArticleController {
     return this.articleService.findOne(id);
   }
 
+  @Roles('admin', 'editor')
   @Put(':id')
   @ApiOkResponse({ description: 'The article has been successfully updated.' })
   update(
@@ -63,6 +69,7 @@ export class ArticleController {
     return this.articleService.update(id, updateArticleDto);
   }
 
+  @Roles('admin')
   @Delete(':id')
   @HttpCode(204)
   remove(@Param('id', new ParseUUIDPipe()) id: string) {

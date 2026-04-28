@@ -11,6 +11,10 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
 import { Category } from '@prisma/client';
+
+import { Public } from '../common/decorators/public.decorator';
+import { Roles } from '../common/decorators/roles.decorator';
+
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -20,6 +24,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
+  @Roles('admin')
   @Post()
   @ApiCreatedResponse({
     description: 'The category has been successfully created.',
@@ -40,6 +45,7 @@ export class CategoryController {
     return this.categoryService.findOne(id);
   }
 
+  @Roles('admin')
   @Put(':id')
   @ApiOkResponse({ description: 'The category has been successfully updated.' })
   update(
@@ -49,6 +55,7 @@ export class CategoryController {
     return this.categoryService.update(id, updateCategoryDto);
   }
 
+  @Roles('admin')
   @Delete(':id')
   @HttpCode(204)
   remove(@Param('id', new ParseUUIDPipe()) id: string) {

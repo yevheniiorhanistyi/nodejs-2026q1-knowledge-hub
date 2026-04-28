@@ -131,4 +131,3 @@ npx prisma studio
 Scanned with Docker Scout — no critical vulnerabilities found.
 
 <img width="710" height="174" alt="image" src="https://github.com/user-attachments/assets/5f0d1255-47e1-4ca8-9c0c-58437c3412c6" />
-

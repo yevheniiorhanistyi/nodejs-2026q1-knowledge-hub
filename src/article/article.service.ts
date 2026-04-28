@@ -2,19 +2,27 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-
 import { ArticleStatus } from '@prisma/client';
 
 @Injectable()
 export class ArticleService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private mapArticle(article: any) {
+    return {
+      ...article,
+      createdAt: article.createdAt.getTime(),
+      updatedAt: article.updatedAt.getTime(),
+      tags: article.tags.map((t: any) => t.name),
+    };
+  }
+
   async create(dto: CreateArticleDto) {
-    return this.prisma.article.create({
+    const article = await this.prisma.article.create({
       data: {
         title: dto.title,
         content: dto.content,
-        status: dto.status ?? ArticleStatus.DRAFT,
+        status: dto.status ?? ArticleStatus.draft,
         authorId: dto.authorId ?? null,
         categoryId: dto.categoryId ?? null,
         tags: {
@@ -26,10 +34,11 @@ export class ArticleService {
       },
       include: { tags: true },
     });
+    return this.mapArticle(article);
   }
 
   async findAll(status?: string, tag?: string, categoryId?: string) {
-    return this.prisma.article.findMany({
+    const articles = await this.prisma.article.findMany({
       where: {
         ...(status && { status: status as ArticleStatus }),
         ...(categoryId && { categoryId }),
@@ -37,6 +46,7 @@ export class ArticleService {
       },
       include: { tags: true },
     });
+    return articles.map((a) => this.mapArticle(a));
   }
 
   async findOne(id: string) {
@@ -45,12 +55,12 @@ export class ArticleService {
       include: { tags: true },
     });
     if (!article) throw new NotFoundException();
-    return article;
+    return this.mapArticle(article);
   }
 
   async update(id: string, dto: UpdateArticleDto) {
     await this.findOne(id);
-    return this.prisma.article.update({
+    const article = await this.prisma.article.update({
       where: { id },
       data: {
         ...(dto.title && { title: dto.title }),
@@ -70,6 +80,7 @@ export class ArticleService {
       },
       include: { tags: true },
     });
+    return this.mapArticle(article);
   }
 
   async remove(id: string) {

@@ -8,22 +8,22 @@ datasource db {
 }
 
 enum Role {
-  ADMIN
-  EDITOR
-  VIEWER
+  admin
+  editor
+  viewer
 }
 
 enum ArticleStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
+  draft
+  published
+  archived
 }
 
 model User {
   id        String   @id @default(uuid())
   login     String   @unique
   password  String
-  role      Role     @default(VIEWER)
+  role      Role     @default(viewer)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -44,13 +44,15 @@ model Tag {
   name     String    @unique
   
   articles Article[]
+
+  @@index([name])
 }
 
 model Article {
   id         String        @id @default(uuid())
   title      String
   content    String
-  status     ArticleStatus @default(DRAFT)
+  status     ArticleStatus @default(draft)
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
 
@@ -63,6 +65,8 @@ model Article {
   tags       Tag[]
 
   comments   Comment[]     @relation("ArticleComments")
+  
+  @@index([status, categoryId])
 }
 
 model Comment {
@@ -70,8 +74,8 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
 
-  authorId  String
-  author    User     @relation("UserComments", fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String?
+  author    User?     @relation("UserComments", fields: [authorId], references: [id], onDelete: Cascade)
 
   articleId String
   article   Article  @relation("ArticleComments", fields: [articleId], references: [id], onDelete: Cascade)
