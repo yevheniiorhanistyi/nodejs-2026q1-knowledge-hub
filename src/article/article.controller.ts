@@ -16,7 +16,7 @@ import {
   ApiCreatedResponse,
   ApiQuery,
 } from '@nestjs/swagger';
-import { Article } from './entities/article.entity';
+import { Article } from '@prisma/client';
 import { ArticleStatus } from './article.types';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -28,13 +28,15 @@ export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
   @Post()
-  @ApiCreatedResponse({ type: Article })
-  create(@Body() createArticleDto: CreateArticleDto): Article {
+  @ApiCreatedResponse({
+    description: 'The article has been successfully created.',
+  })
+  create(@Body() createArticleDto: CreateArticleDto): Promise<Article> {
     return this.articleService.create(createArticleDto);
   }
 
   @Get()
-  @ApiOkResponse({ type: [Article] })
+  @ApiOkResponse({ description: 'Returns a list of articles.' })
   @ApiQuery({ name: 'status', required: false, enum: ArticleStatus })
   @ApiQuery({ name: 'tag', required: false })
   @ApiQuery({ name: 'categoryId', required: false })
@@ -47,13 +49,13 @@ export class ArticleController {
   }
 
   @Get(':id')
-  @ApiOkResponse({ type: Article })
+  @ApiOkResponse({ description: 'Returns the requested article.' })
   findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.articleService.findOne(id);
   }
 
   @Put(':id')
-  @ApiOkResponse({ type: Article })
+  @ApiOkResponse({ description: 'The article has been successfully updated.' })
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateArticleDto: UpdateArticleDto,

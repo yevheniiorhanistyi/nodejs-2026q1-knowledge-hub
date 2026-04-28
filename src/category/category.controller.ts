@@ -10,7 +10,7 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
-import { Category } from './entities/category.entity';
+import { Category } from '@prisma/client';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -21,25 +21,27 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  @ApiCreatedResponse({ type: Category })
-  create(@Body() createCategoryDto: CreateCategoryDto): Category {
+  @ApiCreatedResponse({
+    description: 'The category has been successfully created.',
+  })
+  create(@Body() createCategoryDto: CreateCategoryDto): Promise<Category> {
     return this.categoryService.create(createCategoryDto);
   }
 
   @Get()
-  @ApiOkResponse({ type: [Category] })
+  @ApiOkResponse({ description: 'Returns a list of categories.' })
   findAll() {
     return this.categoryService.findAll();
   }
 
   @Get(':id')
-  @ApiOkResponse({ type: Category })
+  @ApiOkResponse({ description: 'Returns the requested category.' })
   findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.categoryService.findOne(id);
   }
 
   @Put(':id')
-  @ApiOkResponse({ type: Category })
+  @ApiOkResponse({ description: 'The category has been successfully updated.' })
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
