@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  BadRequestException,
-  ForbiddenException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import type { StringValue } from 'ms';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
@@ -14,6 +9,12 @@ import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { TokensResponseDto } from './dto/tokens-response.dto';
+
+import {
+  ValidationError,
+  UnauthorizedError,
+  ForbiddenError,
+} from '../common/errors/http-errors';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +28,7 @@ export class AuthService {
       where: { login: dto.login },
     });
     if (existing) {
-      throw new BadRequestException('Login is already taken');
+      throw new ValidationError('Login is already taken');
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -49,20 +50,20 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new ForbiddenException('Invalid credentials');
+      throw new ForbiddenError('Invalid credentials');
     }
 
     const passwordMatch = await bcrypt.compare(dto.password, user.password);
     if (!passwordMatch) {
-      throw new ForbiddenException('Invalid credentials');
+      throw new ForbiddenError('Invalid credentials');
     }
 
     return this.generateTokens(user.id, user.login, user.role);
   }
 
   async refresh(dto: RefreshTokenDto): Promise<TokensResponseDto> {
-    if (!dto.refreshToken) {
-      throw new UnauthorizedException('Refresh token is required');
+    if (!dto?.refreshToken) {
+      throw new UnauthorizedError('Refresh token is required');
     }
 
     try {
@@ -75,18 +76,15 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new ForbiddenException('User not found');
+        throw new ForbiddenError('User not found');
       }
 
       return this.generateTokens(user.id, user.login, user.role);
     } catch (err) {
-      if (
-        err instanceof UnauthorizedException ||
-        err instanceof ForbiddenException
-      ) {
+      if (err instanceof UnauthorizedError || err instanceof ForbiddenError) {
         throw err;
       }
-      throw new ForbiddenException('Refresh token is invalid or expired');
+      throw new ForbiddenError('Refresh token is invalid or expired');
     }
   }
 
