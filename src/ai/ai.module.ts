@@ -11,5 +11,6 @@ import { AiSessionService } from './services/ai-session.service';
   imports: [ArticleModule],
   controllers: [AiController],
   providers: [GeminiService, AiCacheService, AiUsageService, AiSessionService],
+  exports: [GeminiService],
 })
 export class AiModule {}
