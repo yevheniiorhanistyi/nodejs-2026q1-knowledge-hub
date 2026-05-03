@@ -50,6 +50,26 @@ services:
       timeout: 5s
       retries: 5
 
+  vectordb:
+    image: qdrant/qdrant:latest
+    container_name: knowledge-hub-vectordb
+    ports:
+      - '6333:6333'
+      - '6334:6334'
+    volumes:
+      - qdrantdata:/qdrant/storage
+    networks:
+      - knowledge-hub-network
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'wget --no-verbose --tries=1 --spider http://localhost:6333/healthz || exit 1',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   adminer:
     image: adminer
     container_name: knowledge-hub-adminer
@@ -66,3 +86,4 @@ networks:
 
 volumes:
   pgdata:
+  qdrantdata:

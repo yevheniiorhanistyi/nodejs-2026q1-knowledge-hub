@@ -24,7 +24,7 @@ import { UserResponseDto } from './dto/user-response.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Roles('admin', 'editor')
+  @Roles('admin')
   @Post()
   @ApiCreatedResponse({
     description: 'The user has been successfully created.',
