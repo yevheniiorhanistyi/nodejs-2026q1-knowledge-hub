@@ -12,17 +12,27 @@ import { CategoryModule } from './category/category.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { AiModule } from './ai/ai.module';
+import { RagModule } from './rag/rag.module';
+
+import authConfig from './config/auth.config';
+import cryptoConfig from './config/crypto.config';
+import dbConfig from './config/database.config';
+import aiConfig from './config/ai.config';
+import ragConfig from './config/rag.config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [authConfig, cryptoConfig, dbConfig, aiConfig, ragConfig],
+    }),
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         throttlers: [
           {
             ttl: 60_000,
-            limit: config.get<number>('AI_RATE_LIMIT_RPM', 20),
+            limit: Number(config.get('AI_RATE_LIMIT_RPM')) || 20,
           },
         ],
       }),
@@ -34,6 +44,7 @@ import { AiModule } from './ai/ai.module';
     CategoryModule,
     AuthModule,
     AiModule,
+    RagModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },
