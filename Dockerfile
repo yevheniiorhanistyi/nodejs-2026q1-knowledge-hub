@@ -23,6 +23,8 @@ COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 COPY prisma ./prisma
 
+RUN mkdir -p logs && chown -R node:node /usr/src/app
+
 EXPOSE 4000
 
 USER node
