@@ -13,7 +13,7 @@ export class AiCacheService {
   private readonly ttlMs: number;
 
   constructor(private readonly config: ConfigService) {
-    const ttlSec = this.config.get<number>('AI_CACHE_TTL_SEC', 300);
+    const ttlSec = this.config.get<number>('ai.cacheTtlSec', 300);
     this.ttlMs = ttlSec * 1000;
     this.logger.log(`Cache TTL configured: ${ttlSec}s`);
   }

@@ -23,12 +23,12 @@ export class GeminiService {
   private readonly maxRetries = 3;
 
   constructor(private readonly config: ConfigService) {
-    this.apiKey = this.config.getOrThrow<string>('GEMINI_API_KEY');
+    this.apiKey = this.config.getOrThrow<string>('ai.apiKey');
     this.baseUrl = this.config.get<string>(
-      'GEMINI_API_BASE_URL',
+      'ai.baseUrl',
       'https://generativelanguage.googleapis.com',
     );
-    this.model = this.config.get<string>('GEMINI_MODEL', 'gemini-2.0-flash');
+    this.model = this.config.get<string>('ai.model', 'gemini-2.5-flash');
   }
 
   async generate(
